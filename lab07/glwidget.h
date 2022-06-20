@@ -5,6 +5,7 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
+#include "terraingenerator.h"
 #include <QMatrix4x4>
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
@@ -30,6 +31,7 @@ private:
     QMatrix4x4 m_proj;
     QMatrix4x4 m_camera;
     QMatrix4x4 m_world;
+    TerrainGenerator m_terrain;
     int m_projMatrixLoc = 0;
     int m_mvMatrixLoc = 0;
 };

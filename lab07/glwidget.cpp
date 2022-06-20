@@ -20,7 +20,7 @@ GLWidget::~GLWidget()
 void GLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(1, 0, 0, 1);
+    glClearColor(0, 0, 0, 1);
     m_program = new QOpenGLShaderProgram;
     std::cout << QDir::currentPath().toStdString() << std::endl;
     m_program->addShaderFromSourceFile(QOpenGLShader::Vertex,"vertex.vert");
@@ -34,9 +34,7 @@ void GLWidget::initializeGL()
     m_terrainVao.create();
     m_terrainVao.bind();
 
-    TerrainGenerator *terrainGen = new TerrainGenerator();
-    std::vector<GLfloat> verts = terrainGen->generateTerrain();
-    delete(terrainGen);
+    std::vector<GLfloat> verts = m_terrain.generateTerrain();
 
     m_terrainVbo.create();
     m_terrainVbo.bind();
@@ -52,8 +50,15 @@ void GLWidget::initializeGL()
 
     m_terrainVbo.release();
 
+    m_world.setToIdentity();
+    m_world.translate(QVector3D(-0.5,-0.5,0));
+    m_world.scale(1.0/m_terrain.getResolution(),
+                  1.0/m_terrain.getResolution(),
+                  1.0);
+
     m_camera.setToIdentity();
     m_camera.lookAt(QVector3D(1,1,1),QVector3D(0,0,0),QVector3D(0,0,1));
+
     m_program->release();
 }
 
@@ -61,13 +66,14 @@ void GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 
     m_program->bind();
     m_program->setUniformValue(m_projMatrixLoc, m_proj);
     m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    int res = m_terrain.getResolution();
+    glDrawArrays(GL_TRIANGLES, 0, res * res * 6);
 
     m_program->release();
 }
