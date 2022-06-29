@@ -12,11 +12,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("CS1230");
     QCoreApplication::setApplicationVersion(QT_VERSION_STR);
 
+    /*
     QSurfaceFormat fmt;
     fmt.setDepthBufferSize(24);
     fmt.setVersion(3, 2);
     fmt.setProfile(QSurfaceFormat::CoreProfile);
     QSurfaceFormat::setDefaultFormat(fmt);
+    */
 
     MainWindow w;
     //w.resize(w.sizeHint());

@@ -1,4 +1,4 @@
-QT += widgets opengl openglwidgets
+QT += widgets opengl openglwidgets gui
 
 CONFIG += c++20
 
