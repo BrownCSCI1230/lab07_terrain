@@ -26,9 +26,9 @@ As you can see from these examples, well constructed noise can be used to create
 	
 The noise that we will be implementing today is called Perlin Noise, and is a classic noise generation algorithm. Let's hop into it.
 
-<detail> <summary> Why Perlin Noise?</summary> 
+<details> <summary> Why Perlin Noise?</summary> 
 	
-</detail> 
+</details> 
 
 ### Implementation
 
@@ -41,7 +41,7 @@ Repeat for each location you want to evaluate!
 
 Don't worry if you are still confused, this is just a high level overview. We will get into the details in the later Tasks!
 
-<detail> <summary> Side note on our random vector generation method </summary>
+<details> <summary> Side note on our random vector generation method </summary>
 
 There are many potential ways to generate a grid of random vectors. For example generating two random floats and then storing them in arrays. This would have fast lookup but larger memory overhead. Additionally this method is harder to scale as if you want higher frequency noise then your current vector grid allows (we will get into the mechanics of this), you would need to regenerate, or at least extend the grid to accommodate the new data. There is nothing wrong with this approach, in fact I'd say it's probably the first thing someone would think of and definitely a valid solution, but it's not what we have gone with.
 
@@ -59,7 +59,7 @@ But wait, we need a 2D grid of vectors, how can we take this approach and extend
 
 The resulting grid of vectors has some useful properties for our purposes. First the grid, while looking random, is completely deterministic and portable, which makes debugging easier for us as everyone's noise should look the same. Second, the grid is "infinite" in extent which means if we want to sample from a larger area, there is no extra work required!
 
-</detail> 
+</details> 
 
 **Task 1: Obtain four closest grid points**
 
@@ -83,7 +83,7 @@ We have four offset vectors and can look up the random vectors for each using ge
 
 Fill in the function, interpolate, in the stencil.
 
-<detail>
+<details>
 <summary>Introduction to Interpolation</summary>
 
 We are now faced with an important decision: Choice of interpolation function. There is no "right" or "correct" interpolation method in general, only what effect you want to create for a specific application.
@@ -114,7 +114,7 @@ We could also consider This weird function below…
 
 …if you really wanted to. The point is that this is more of a creative design decision than an analytically correct one.
 
-</detail>
+</details>
 
 We will be using bicubic interpolation, given by the formula $$y = A + (3x^{2}-2x^{3}) * (B - A)$$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
 
