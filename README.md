@@ -1,6 +1,6 @@
 # Terrain Lab
 
-## Introduction
+# Introduction
 
 Hello, welcome to the Terrain Lab! This module introduces you to the concept of procedural noise, interpolation functions, and how they can be used to create visually rich environments with very little manual work! We will be implementing a noise generation function and use it to create a mountainous terrain height map. Then we will have a quick exercise in vector operations to create visually interesting snow effects. Let's get started!
 
@@ -11,11 +11,11 @@ understand how scaling and adding noise creates interesting detail,
 be able to come up with your own creative uses for procedural noise!
 working with non-Implicit Geometry and per vertex information.
 
-## Noise Generator
+# Noise Generator
 
 ![Examples of Procedural Noise](readmeImages/image2.jpg)
 
-### Context
+## Context
 Procedural noise as a concept in graphics is simply any method that can create randomized data with certain desirable properties (like continuity for example).
 
 
@@ -31,7 +31,7 @@ The noise that we will be implementing today is called Perlin Noise, and is a cl
 	
 </details> 
 
-### Implementation
+## Implementation
 
 The method of creating perlin noise is, generally, as follows…
 define a grid of vectors with randomized direction
@@ -143,13 +143,13 @@ Note here that the interpolation factor for all these calculations is given by d
 
 Now that has all been covered, finish writing the generatePerlin function by writing this four way interpolation!
 
-## Introducing Octaves
+# Introducing Octaves
 
 Now that we have simple, bumpy terrain, we are going to add some visual detail by adding multiple copies of noise with different scales. This will replace the smooth unnatural hills with rugged mountains!
 
 (get pictures showing the result)
 
-### Scaling our Perlin Noise
+## Scaling our Perlin Noise
 
 The first thing to understand is how to scale the noise in the first place. Remember how we are generating the height in the first place, a call to (name of function here) with x and y used directly.
 
@@ -157,7 +157,7 @@ The first thing to understand is how to scale the noise in the first place. Reme
 
 Modify just the inputs of this function and generate noise with a different scale.
 
-### What are Octaves
+## What are Octaves
 
 Now that we know how to scale the noise the question is how much? Well we could pick any arbitrary amount to be honest. However, one technique which gives natural looking results is to increase the frequency by powers of two. By doubling the frequency we get the next "octave" of the noise (to people with some knowledge of music this may be familiar).
 
@@ -171,11 +171,11 @@ Now that we know how to scale the noise (in both frequency and amplitude), the o
 
 In the (compute height function) use multiple calls to the generate noise function to add at least 4 different noise octaves to the scene each with the correct amplitude and frequency to generate rugged terrain!
 
-## Hit the Slopes
+# Hit the Slopes
 
 	Now that the height map has been specified we have some mountainous terrain but there is no color variation leading to a somewhat bland scene. To add some visual interest we are going to introduce a per-vertex color based on the slope of the surrounding terrain. The end goal is that mountain slopes are gray stone and flat areas or peaks are white like snow.
 
-### Getting the Normal
+## Getting the Normal
 
 The first thing we need to do is compute the normal for a given vertex.
 
@@ -191,7 +191,7 @@ Now we need to calculate the normals for each triangle individually, and then av
 
 In the getNormal function use getPosition and compute the normal for the specified vertex.
 
-### Setting the Color
+## Setting the Color
 
 Now that we have the normal, we need to use this slope information to make vertical sections gray and horizontal sections white.
 
