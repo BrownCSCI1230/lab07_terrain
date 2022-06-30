@@ -42,45 +42,25 @@ Repeat for each location you want to evaluate!
 
 Don't worry if you are still confused, this is just a high level overview. We will get into the details in the later Tasks!
 
-<details> <summary> Side note on our random vector generation method </summary>
-
-There are many potential ways to generate a grid of random vectors. For example generating two random floats and then storing them in arrays. This would have fast lookup but larger memory overhead. Additionally this method is harder to scale as if you want higher frequency noise then your current vector grid allows (we will get into the mechanics of this), you would need to regenerate, or at least extend the grid to accommodate the new data. There is nothing wrong with this approach, in fact I'd say it's probably the first thing someone would think of and definitely a valid solution, but it's not what we have gone with.
-
-If you look at the code for "getGridVector(int x, int y): float" you will see that there are no library calls to random or array index operations. Instead we this general pattern of `glm::fract(sin(x * f) * a)` which we will now dissect piece by piece.
-
-> **sin (x * f)**: for large, irrational f, we get a high frequency sinusoid with nice, non-repeating properties when we sample with integer X.
-
-> *** a**: takes the value we receive out of the sin (in range [-1 to 1]),  and scales it to the range [-a, a]
-
-> **glm::fract**: takes the large float value from [-a to a] and truncates the integer portion of the number leaving only the fractional part, aka the part to the right of the decimal, leaving the output in the range (-1, 1).
-
-The net result is that for different **f** and **a** we get a consistent mapping of integers to random floats. The problem we have currently is that this only produces one dimension of random numbers while for a texture we need two dimensions to create the terrain height map. To extend to two dimensions we simply include the second parameter inside the sin with a different frequency. This method of combination leaves the output looking uncorrelated enough for our purposes and produces a 2D grid of randomized values! 
-
-But wait, we need a 2D grid of vectors, how can we take this approach and extend to our needs? We simply do it twice with different frequency and amplitude!
-
-The resulting grid of vectors has some useful properties for our purposes. First the grid, while looking random, is completely deterministic and portable, which makes debugging easier for us as everyone's noise should look the same. Second, the grid is "infinite" in extent which means if we want to sample from a larger area, there is no extra work required!
-
-</details> 
-
-**Task 1: Obtain four closest grid points**
+> **Task 1:** Obtain four closest grid points
 
 (image showing task)
 
 Given the floating point coordinates to evaluate we need to compute the integer indices of the four closest grid points. Look into glm::floor and glm::ceil.
 
-**Task 2: Compute the four offset vectors**
+> **Task 2:** Compute the four offset vectors
 
 (image showing task)
 
 Using the coordinates of the four closest grid points and the input location, compute the four offset vectors from the grid points to the interest point. Make sure to normalize the results to unit vectors.
 
-**Task 3: Compute dot product between offset and random vector**
+> **Task 3:** Compute dot product between offset and random vector
 
 (image showing task)
 
 We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine to get the final height.
 
-**Task 4: Fill in interpolation function**
+> **Task 4:** Fill in interpolation function
 
 Fill in the function, interpolate, in the stencil.
 
@@ -117,13 +97,13 @@ We could also consider This weird function below…
 
 </details>
 
-We will be using bicubic interpolation, given by the formula $$y = A + (3x^{2}-2x^{3}) * (B - A)$$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
+We will be using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
 
 ![cubic](readmeImages/image4.png)
 
 (add images showing terrain with bicubic interpolation)
 
-**Task 5: Use interpolation function to merge four values into one**
+> **Task 5:** Use interpolation function to merge four values into one
 
 
 Now that we have all our data, we need to combine it into one value representing the noise value at this coordinate. This is where we put our interpolation function to work. 
@@ -153,9 +133,7 @@ Now that we have simple, bumpy terrain, we are going to add some visual detail b
 
 The first thing to understand is how to scale the noise in the first place. Remember how we are generating the height in the first place, a call to (name of function here) with x and y used directly.
 
-**Task 6: **
-
-Modify just the inputs of this function and generate noise with a different scale.
+> **Task 6:** Modify just the inputs to `computePerlin` and generate noise with a different scale.
 
 ## What are Octaves
 
@@ -165,15 +143,11 @@ Now that we know how to scale the noise the question is how much? Well we could 
 
 But we have to be careful when doing this. If we just directly add the higher frequency noise without changing it, the higher frequencies will overpower the lower frequency information. To protect against this, as we double the frequency of the noise, we halve the amplitude. This keeps a hierarchy to the noise that gives a really good effect.
 
-**Task 7: ** 
-
-Now that we know how to scale the noise (in both frequency and amplitude), the only thing left is to actually do it. 
-
-In the (compute height function) use multiple calls to the generate noise function to add at least 4 different noise octaves to the scene each with the correct amplitude and frequency to generate rugged terrain!
+> **Task 7:** In the (compute height function) use multiple calls to the generate noise function to add at least 4 different noise octaves to the scene each with the correct amplitude and frequency to generate rugged terrain!
 
 # Hit the Slopes
 
-	Now that the height map has been specified we have some mountainous terrain but there is no color variation leading to a somewhat bland scene. To add some visual interest we are going to introduce a per-vertex color based on the slope of the surrounding terrain. The end goal is that mountain slopes are gray stone and flat areas or peaks are white like snow.
+Now that the height map has been specified we have some mountainous terrain but there is no color variation leading to a somewhat bland scene. To add some visual interest we are going to introduce a per-vertex color based on the slope of the surrounding terrain. The end goal is that mountain slopes are gray stone and flat areas or peaks are white like snow.
 
 ## Getting the Normal
 
@@ -181,15 +155,15 @@ The first thing we need to do is compute the normal for a given vertex.
 
 (image here)
 
-Start by considering a vertex $$V$$ surrounded by its eight neighbors $$n_0$$ -> $$n_7$$. Begin by grouping the vertices in triangles such that all triangles have a corner in $$V$$, this creates triangles of the following form $$(V, n_i, n_{i+1})$$.
+Start by considering a vertex $V$ surrounded by its eight neighbors $n_0$ through $n_7$. Begin by grouping the vertices in triangles such that all triangles have a corner in $V$,
+this creates triangles of the following form $(V, n_i, n_{i+1})$.
 
 (image here)
 
-Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $$V$$. To compute the normal for triangle $$(V, n_i, n_{i+1})$$, Take the cross product (math equation here) and then normalize the result.
+Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $V$.
+To compute the normal for triangle $(V, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
 
-**Task 8: **
-
-In the getNormal function use getPosition and compute the normal for the specified vertex.
+> **Task 8:** In the getNormal function use getPosition and compute the normal for the specified vertex.
 
 ## Setting the Color
 
@@ -199,6 +173,4 @@ To do this we are going to use our old friend, Interpolation! The first step is 
 
 (image illustrating idea)
 
-**Task 9: **
-
-Fill in Compute Color. Use a dot product with a vertical unit vector to interpolate between gray and white.
+> **Task 9:** Fill in Compute Color. Use a dot product with a vertical unit vector to interpolate between gray and white.
