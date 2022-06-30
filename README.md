@@ -18,8 +18,9 @@ working with non-Implicit Geometry and per vertex information.
 ### Context
 Procedural noise as a concept in graphics is simply any method that can create randomized data with certain desirable properties (like continuity for example).
 
+
 | Procedural Mountains  | Perlin Flow | Procedural Organic Texture|
-| --------------------- ------------- | ------------------------- |
+| --------------------- | ------------- | ------------------------- |
 | ![Procedural Mountains](readmeImages/image5.jpg) | ![Perlin Flow](readmeImages/image6.jpg) | ![Perlin Organic Material](readmeImages/image7.png) |
 
 As you can see from these examples, well constructed noise can be used to create really incredible scenes and images from completely random data!
