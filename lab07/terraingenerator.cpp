@@ -9,26 +9,29 @@ void addPointToVector(QVector3D point, std::vector<float>& vector) {
     vector.push_back(point.z());
 }
 
+QVector2D TerrainGenerator::randVec(int row, int col)
+{
+    return m_randVecLookup.at((row * (2 + m_resolution) + col) % ((2 + m_resolution) * (2 + m_resolution)));
+}
+
+float TerrainGenerator::randVal(int row, int col)
+{
+    return (m_randVecLookup.at((row * (2 + m_resolution) + col) % ((2 + m_resolution) * (2 + m_resolution))).x() + 1)/2;
+}
 
 float interpolate(float A, float B, float x) {
-    auto ease = [](float x) -> float { return ((x * (x * 6.0 - 15.0) + 10.0) * x * x * x);};
-    //auto ease = [](float x) -> float { return x * x * (3 - 2 * x);};
+    // Task X: implement your eased interpolation function below!
+
+    //auto ease = [](float x) -> float { return ((x * (x * 6.0 - 15.0) + 10.0) * x * x * x);};
+    auto ease = [](float x) -> float { return x * x * (3 - 2 * x);};
     //auto ease = [](float x) -> float { return x;};
 
     return A + ease(x) * (B - A);
 }
 
-QVector2D randVec(int row, int col)
-{
-    double integralPart;
-    float x = modf(sin(row * 127506.1f + col * 611046.7f) * 4375870.5453123f, &integralPart);
-    float y = modf(sin(row * 9816.8f + col * 1687.4f) * 851064.379022f, &integralPart);
-
-    return QVector2D(x,y);
-}
 
 float TerrainGenerator::computePerlin(float x, float y) {
-    //Task
+    //Task X: TODO description
     int intX = (int) x;
     int intY = (int) y;
 
@@ -46,11 +49,26 @@ float TerrainGenerator::computePerlin(float x, float y) {
                        y - intY);
 }
 
+float TerrainGenerator::computeValue(float x, float y) {
+    //Task X: TODO description
+    int intX = (int) x;
+    int intY = (int) y;
+
+    float A = randVal(intX, intY);
+    float B = randVal(intX + 1, intY);
+    float C = randVal(intX + 1, intY + 1);
+    float D = randVal(intX, intY + 1);
+
+    return interpolate(interpolate(A,B,x - intX),
+                       interpolate(D,C,x - intX),
+                       y - intY);
+}
+
 QVector3D TerrainGenerator::getPosition(int row, int col) {
     float x = 1.0 * row / m_resolution;
     float y = 1.0 * col / m_resolution;
 
-    // Task X: compute the zPos using your compute Perlin Method
+    //Task X: TODO description
     float z = 0;
 
     float Pos2 = (computePerlin(x * 2, y * 2) / 2);
@@ -59,6 +77,7 @@ QVector3D TerrainGenerator::getPosition(int row, int col) {
     float Pos16 = (computePerlin(x * 16, y * 16) / 16);
     float Pos32 = (computePerlin(x * 32, y * 32) / 32);
 
+    //z = Pos2 + Pos4 + Pos8 + Pos16 + Pos32 + Pos8;
     z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
 
     return QVector3D(x,y,z);
@@ -94,11 +113,10 @@ QVector3D TerrainGenerator::getNormal(int row, int col) {
 
 
 QVector3D TerrainGenerator::getColor(QVector3D normal) {
-    //Task X: using the normal, dot product, and your interpolation function,
-    //        return the color of the terrain
+    //Task X: TODO description
 
     float mix = QVector3D::dotProduct(normal, QVector3D(0,0,1));
-    float value = interpolate(0.3,1,mix);
+    float value = interpolate(0.2,1,mix);
 
     return QVector3D(value,value,value);
 }
@@ -107,13 +125,23 @@ QVector3D TerrainGenerator::getColor(QVector3D normal) {
 
 TerrainGenerator::TerrainGenerator()
 {
-    //Set resolution for terrain generation
     m_resolution = 250;
+    m_randVecLookup.reserve((m_resolution + 2) * (m_resolution + 2));
+
+    std::srand(1);
+
+    for(int r = 0; r < m_resolution + 2; r++)
+    {
+        for(int c = 0; c < m_resolution + 2; c++)
+        {
+            m_randVecLookup.push_back(QVector2D(std::rand() * 2.0 / RAND_MAX - 1.0,std::rand() * 2.0 / RAND_MAX - 1.0));
+        }
+    }
 }
 
 TerrainGenerator::~TerrainGenerator()
 {
-
+    m_randVecLookup.clear();
 }
 
 int TerrainGenerator::getResolution()
