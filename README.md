@@ -43,7 +43,10 @@ The method of creating perlin noise is, generally, as follows…
 Don't worry if you are still confused, this is just a high level overview. We will get into the details in the later Tasks!
 
 ### Get the Four Closest Grid Indices
-(image showing task)
+
+<p align="center">
+<img src="readmeImages/pic1.png" width="800">
+</p>
 
 Given the floating point coordinates to evaluate we need to compute the integer indices of the four closest grid points. Look into glm::floor and glm::ceil.
 
@@ -51,7 +54,9 @@ Given the floating point coordinates to evaluate we need to compute the integer 
 
 ### Compute Offset Vectors
 
-(image showing task)
+<p align="center">
+<img src="readmeImages/pic2.png" width="800">
+</p>
 
 Using the coordinates of the four closest grid points and the input location, compute the four offset vectors from the grid points to the interest point. Make sure to normalize the results to unit vectors.
 
@@ -59,7 +64,9 @@ Using the coordinates of the four closest grid points and the input location, co
 
 ### Compute Dot Products
 
-(image showing task)
+<p align="center">
+<img src="readmeImages/pic3.png" width="800">
+</p>
 
 We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine to get the final height.
 
@@ -67,10 +74,6 @@ We have four offset vectors and can look up the random vectors for each using ge
 
 ### Implement Interpolation
 
-<details>
-<summary>Introduction to Interpolation</summary>
-	
----
 We are now faced with an important decision: Choice of interpolation function. There is no "right" or "correct" interpolation method in general, only what effect you want to create for a specific application.
 
 The problem can be stated abstractly as follows…
@@ -100,10 +103,6 @@ We could also consider This weird function below…
 
 …if you really wanted to. The point is that this is more of a creative design decision than an analytically correct one.
 
----
-	
-</details>
-
 We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
 
 <p align="center">
@@ -119,14 +118,14 @@ Now that we have all our data, we need to combine it into one value representing
 
 The answer is to perform multiple interpolations and then compose them to get one final value.
 
-(image with 4 point interpolation)
+<p align="center">
+<img src="readmeImages/pic4.png" width="800">
+</p>
 
 Suppose we have the four values A, B, C, and D at their corresponding grid points.
-get G by interpolating between A and B 
-get H by interpolating between C and D
-get Result by interpolating between G and H
-
-Note here that the interpolation factor for all these calculations is given by distance(interpolation point, first reference)/distance(first reference, second reference).
+- get G by interpolating between A and B 
+- get H by interpolating between C and D
+- get Result by interpolating between G and H
 
 Now that has all been covered, finish writing the generatePerlin function by writing this four way interpolation!
 
@@ -168,12 +167,14 @@ The first thing we need to do is compute the normal for a given vertex.
 <p align="center">
 <img src="readmeImages/image11.png" width="400">
 </p>
+(TODO different image or is this fine?, ideally have some more information here)
 
-Start by considering a vertex $V$ surrounded by its eight neighbors $n_0$ through $n_7$. Begin by grouping the vertices in triangles such that all triangles have a corner in $V$,
-this creates triangles of the following form $(V, n_i, n_{i+1})$.
 
-Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $V$.
-To compute the normal for triangle $(V, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
+Start by considering a vertex $P$ surrounded by its eight neighbors $n_0$ through $n_7$. Begin by grouping the vertices in triangles such that all triangles have a corner in $P$,
+this creates triangles of the following form $(P, n_i, n_{i+1})$.
+
+Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $P$.
+To compute the normal for triangle $(P, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
 
 > **Task 8:** In the getNormal function use getPosition and compute the normal for the specified vertex.
 
