@@ -9,7 +9,7 @@ By the end of this lab you should be able to…
 - identify the merits of procedural noise,
 - understand how scaling and adding noise creates interesting detail,
 - be able to come up with your own creative uses for procedural noise!
-- working with non-Implicit Geometry and per vertex information.
+- work with non-Implicit Geometry and per vertex information.
 
 # Noise Generator
 
@@ -34,11 +34,11 @@ The noise that we will be implementing today is called Perlin Noise, and is a cl
 ## Implementation
 
 The method of creating perlin noise is, generally, as follows…
-- define a grid of vectors with randomized direction
-- for a given interest point, find the four closest grid points and compute an offset vector from grid point to the interest point.
-- compute a dot product between each offset and its randomized vector
-- use an interpolation function to combine the 4 dot products into a single value.
-- Repeat for each location you want to evaluate!
+1. define a grid of vectors with randomized direction
+2. for a given interest point, find the four closest grid points and compute an offset vector from grid point to the interest point.
+3. compute a dot product between each offset and its randomized vector
+4. use an interpolation function to combine the 4 dot products into a single value.
+5. Repeat for each location you want to evaluate!
 
 Don't worry if you are still confused, this is just a high level overview. We will get into the details in the later Tasks!
 
@@ -68,7 +68,7 @@ Using the coordinates of the four closest grid points and the input location, co
 <img src="readmeImages/pic3.png" width="800">
 </p>
 
-We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine to get the final height.
+We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine later on to get the final height.
 
 > **Task 3:** Compute the dot product between the offset and random vectors
 
@@ -102,6 +102,8 @@ We could also consider This weird function below…
 </p>
 
 …if you really wanted to. The point is that this is more of a creative design decision than an analytically correct one.
+
+https://easings.net/
 
 We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
 
@@ -167,8 +169,6 @@ The first thing we need to do is compute the normal for a given vertex.
 <p align="center">
 <img src="readmeImages/image11.png" width="400">
 </p>
-(TODO different image or is this fine?, ideally have some more information here)
-
 
 Start by considering a vertex $P$ surrounded by its eight neighbors $n_0$ through $n_7$. Begin by grouping the vertices in triangles such that all triangles have a corner in $P$,
 this creates triangles of the following form $(P, n_i, n_{i+1})$.
