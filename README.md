@@ -60,8 +60,6 @@ Using the coordinates of the four closest grid points and the input location, co
 
 We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine to get the final height.
 
-> **Task 4:** Fill in interpolation function
-
 Fill in the function, interpolate, in the stencil.
 
 <details>
@@ -79,7 +77,11 @@ Given two different values (A and B) and a mix parameter (represented by the hor
 
 The question becomes visually, how do we want to draw a line connecting A to B? Consider a linear interpolation. Given by y = A + x (B - A)
 
-![linear](readmeImages/image3.png)
+	
+<p align="center">
+<img src="readmeImages/image3.png" width="400">
+<img src="readmeImages/image10.png" width="400">
+</p>
 
 (add images showing terrain with linear interpolation)
 
@@ -97,14 +99,13 @@ We could also consider This weird function below…
 
 </details>
 
-We will be using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
+We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
 
 ![cubic](readmeImages/image4.png)
 
 (add images showing terrain with bicubic interpolation)
 
-> **Task 5:** Use interpolation function to merge four values into one
-
+> **Task 4:** Fill in interpolation function
 
 Now that we have all our data, we need to combine it into one value representing the noise value at this coordinate. This is where we put our interpolation function to work. 
 
@@ -123,6 +124,8 @@ Note here that the interpolation factor for all these calculations is given by d
 
 Now that has all been covered, finish writing the generatePerlin function by writing this four way interpolation!
 
+> **Task 5:** Using your interpolation function to merge four values into one
+
 # Introducing Octaves
 
 Now that we have simple, bumpy terrain, we are going to add some visual detail by adding multiple copies of noise with different scales. This will replace the smooth unnatural hills with rugged mountains!
@@ -139,7 +142,9 @@ The first thing to understand is how to scale the noise in the first place. Reme
 
 Now that we know how to scale the noise the question is how much? Well we could pick any arbitrary amount to be honest. However, one technique which gives natural looking results is to increase the frequency by powers of two. By doubling the frequency we get the next "octave" of the noise (to people with some knowledge of music this may be familiar).
 
-(include image here showing this)
+<p align="center">
+<img src="readmeImages/image9.png" width="400">
+</p>
 
 But we have to be careful when doing this. If we just directly add the higher frequency noise without changing it, the higher frequencies will overpower the lower frequency information. To protect against this, as we double the frequency of the noise, we halve the amplitude. This keeps a hierarchy to the noise that gives a really good effect.
 
@@ -153,12 +158,12 @@ Now that the height map has been specified we have some mountainous terrain but 
 
 The first thing we need to do is compute the normal for a given vertex.
 
-(image here)
+<p align="center">
+<img src="readmeImages/image11.png" width="400">
+</p>
 
 Start by considering a vertex $V$ surrounded by its eight neighbors $n_0$ through $n_7$. Begin by grouping the vertices in triangles such that all triangles have a corner in $V$,
 this creates triangles of the following form $(V, n_i, n_{i+1})$.
-
-(image here)
 
 Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $V$.
 To compute the normal for triangle $(V, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
@@ -171,6 +176,8 @@ Now that we have the normal, we need to use this slope information to make verti
 
 To do this we are going to use our old friend, Interpolation! The first step is to get the mix factor. To do this take a dot product with the normal and a vector pointing directly up. The result will range from 1.0 when the slope is exactly horizontal to 0.0 when the slope is exactly vertical. We then use this value to interpolate between gray and white!
 
-(image illustrating idea)
+<p align="center">
+<img src="readmeImages/image10.png" width="400">
+</p>
 
 > **Task 9:** Fill in Compute Color. Use a dot product with a vertical unit vector to interpolate between gray and white.
