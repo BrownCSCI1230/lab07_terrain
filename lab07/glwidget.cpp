@@ -88,7 +88,7 @@ void GLWidget::paintGL()
     int res = m_terrain.getResolution();
 
 
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK,m_terrain.m_wireshade? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, res * res * 6);
 
     m_program->release();

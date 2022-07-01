@@ -22,9 +22,11 @@ float TerrainGenerator::randVal(int row, int col)
 float interpolate(float A, float B, float x) {
     // Task X: implement your eased interpolation function below!
 
-    //auto ease = [](float x) -> float { return ((x * (x * 6.0 - 15.0) + 10.0) * x * x * x);};
-    auto ease = [](float x) -> float { return x * x * (3 - 2 * x);};
+    const float pi = 3.14159265359;
+    auto ease = [](float x) -> float { return ((x * (x * 6.0 - 15.0) + 10.0) * x * x * x);};
+    //auto ease = [](float x) -> float { return x * x * (3 - 2 * x);};
     //auto ease = [](float x) -> float { return x;};
+    //auto ease = [pi](float x) -> float {return sin(2 * pi * x) / 2.5 + x;};
 
     return A + ease(x) * (B - A);
 }
@@ -72,13 +74,14 @@ QVector3D TerrainGenerator::getPosition(int row, int col) {
     float z = 0;
 
     float Pos2 = (computePerlin(x * 2, y * 2) / 2);
-    float Pos4 = (computePerlin(x * 4, y * 4) / 4);
+    float Pos4 = (computeValue(x * 4, y * 4) / 4);
     float Pos8 = (computePerlin(x * 8, y * 8) / 8);
     float Pos16 = (computePerlin(x * 16, y * 16) / 16);
     float Pos32 = (computePerlin(x * 32, y * 32) / 32);
 
     //z = Pos2 + Pos4 + Pos8 + Pos16 + Pos32 + Pos8;
-    z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
+    z = Pos4;
+    //z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
 
     return QVector3D(x,y,z);
 }
@@ -125,7 +128,7 @@ QVector3D TerrainGenerator::getColor(QVector3D normal) {
 
 TerrainGenerator::TerrainGenerator()
 {
-    m_resolution = 250;
+    m_resolution = 75;
     m_randVecLookup.reserve((m_resolution + 2) * (m_resolution + 2));
 
     std::srand(1);
@@ -142,6 +145,7 @@ TerrainGenerator::TerrainGenerator()
 TerrainGenerator::~TerrainGenerator()
 {
     m_randVecLookup.clear();
+    m_wireshade = true;
 }
 
 int TerrainGenerator::getResolution()

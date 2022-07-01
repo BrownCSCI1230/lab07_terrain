@@ -11,6 +11,7 @@ public:
     ~TerrainGenerator();
     std::vector<float> generateTerrain();
     int getResolution();
+    bool m_wireshade;
 
 private:
     std::vector<QVector2D> m_randVecLookup;
