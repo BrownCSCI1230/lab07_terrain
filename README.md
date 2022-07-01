@@ -2,7 +2,7 @@
 
 # Introduction
 
-Hello, welcome to the Terrain Lab! This module introduces you to the concept of procedural noise, interpolation functions, and how they can be used to create visually rich environments with very little manual work! We will be implementing a noise generation function and use it to create a mountainous terrain height map. Then we will have a quick exercise in vector operations to create visually interesting snow effects. Let's get started!
+Hello, welcome to the Terrain Lab! We've seen how 2D arrays can store intersection information to be used for lighting computation. Here we are going to store height information in a 2D array and use it to construct geometry! We will begin by implementing a noise generation function to create mountainous terrain height maps, then we will have a quick exercise in vector operations to add color to our scene. Let's get started!
 
 By the end of this lab you should be able to…
 
