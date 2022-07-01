@@ -64,44 +64,47 @@ Fill in the function, interpolate, in the stencil.
 
 <details>
 <summary>Introduction to Interpolation</summary>
-
+	
+---
 We are now faced with an important decision: Choice of interpolation function. There is no "right" or "correct" interpolation method in general, only what effect you want to create for a specific application.
 
 The problem can be stated abstractly as follows…
 
 Given two different values (A and B) and a mix parameter (represented by the horizontal axis) between 0 and 1, how can we determine an output as a combination of these three values. Subject to the constraint that when the mix parameter equals 0 or one we want to output A or B respectively. We can visualize this in the following image…
-
-![interpolation setup](readmeImages/image1.png)
-
-(add images showing terrain with no interpolation)
-
+	
+<p align="center">
+<img src="readmeImages/image1.png" width="300">
+</p>
+	
 The question becomes visually, how do we want to draw a line connecting A to B? Consider a linear interpolation. Given by y = A + x (B - A)
 
 	
 <p align="center">
-<img src="readmeImages/image3.png" width="400">
-<img src="readmeImages/image10.png" width="400">
+<img src="readmeImages/image3.png" width="300">
+<img src="readmeImages/image12.png" height="300">
 </p>
-
-(add images showing terrain with linear interpolation)
-
  
 This creates an even transition between the two values, which may be interesting depending on the application.
 
 We could also consider This weird function below…
 
-![werid](readmeImages/image8.png)
-
-(add images showing terrain with wacky interpolation)
-
+<p align="center">
+<img src="readmeImages/image8.png" width="300">
+<img src="readmeImages/image13.PNG" height="300">
+</p>
 
 …if you really wanted to. The point is that this is more of a creative design decision than an analytically correct one.
 
+---
+	
 </details>
 
 We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
 
-![cubic](readmeImages/image4.png)
+<p align="center">
+<img src="readmeImages/image4.png" width="300">
+<img src="readmeImages/image14.png" height="300">
+</p>
 
 (add images showing terrain with bicubic interpolation)
 
