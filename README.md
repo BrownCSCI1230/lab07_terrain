@@ -6,10 +6,10 @@ Hello, welcome to the Terrain Lab! This module introduces you to the concept of 
 
 By the end of this lab you should be able to…
 
-identify the merits of procedural noise,
-understand how scaling and adding noise creates interesting detail,
-be able to come up with your own creative uses for procedural noise!
-working with non-Implicit Geometry and per vertex information.
+- identify the merits of procedural noise,
+- understand how scaling and adding noise creates interesting detail,
+- be able to come up with your own creative uses for procedural noise!
+- working with non-Implicit Geometry and per vertex information.
 
 # Noise Generator
 
@@ -34,33 +34,38 @@ The noise that we will be implementing today is called Perlin Noise, and is a cl
 ## Implementation
 
 The method of creating perlin noise is, generally, as follows…
-define a grid of vectors with randomized direction
-for a given interest point, find the four closest grid points and compute an offset vector from grid point to the interest point.
-compute a dot product between each offset and its randomized vector
-use an interpolation function to combine the 4 dot products into a single value.
-Repeat for each location you want to evaluate!
+- define a grid of vectors with randomized direction
+- for a given interest point, find the four closest grid points and compute an offset vector from grid point to the interest point.
+- compute a dot product between each offset and its randomized vector
+- use an interpolation function to combine the 4 dot products into a single value.
+- Repeat for each location you want to evaluate!
 
 Don't worry if you are still confused, this is just a high level overview. We will get into the details in the later Tasks!
 
-> **Task 1:** Obtain four closest grid points
-
+### Get the Four Closest Grid Indices
 (image showing task)
 
 Given the floating point coordinates to evaluate we need to compute the integer indices of the four closest grid points. Look into glm::floor and glm::ceil.
 
-> **Task 2:** Compute the four offset vectors
+> **Task 1:** Obtain four closest grid points
+
+### Compute Offset Vectors
 
 (image showing task)
 
 Using the coordinates of the four closest grid points and the input location, compute the four offset vectors from the grid points to the interest point. Make sure to normalize the results to unit vectors.
 
-> **Task 3:** Compute dot product between offset and random vector
+> **Task 2:** Compute the four offset vectors for each relevant grid point
+
+### Compute Dot Products
 
 (image showing task)
 
 We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine to get the final height.
 
-Fill in the function, interpolate, in the stencil.
+> **Task 3:** Compute the dot product between the offset and random vectors
+
+### Implement Interpolation
 
 <details>
 <summary>Introduction to Interpolation</summary>
@@ -106,13 +111,11 @@ We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-
 <img src="readmeImages/image14.png" height="300">
 </p>
 
-(add images showing terrain with bicubic interpolation)
-
 > **Task 4:** Fill in interpolation function
 
-Now that we have all our data, we need to combine it into one value representing the noise value at this coordinate. This is where we put our interpolation function to work. 
+### Combine Dot Products
 
-We have a problem though, we defined our interpolation to work based on two values and one mix parameter, so how are we going to combine 4 different values?
+Now that we have all our data, we need to combine it into one value representing the noise value at this coordinate. This is where we put our interpolation function to work. We have a problem though, we defined our interpolation to work based on two values and one mix parameter, so how are we going to combine 4 different values?
 
 The answer is to perform multiple interpolations and then compose them to get one final value.
 
@@ -148,6 +151,7 @@ Now that we know how to scale the noise the question is how much? Well we could 
 <p align="center">
 <img src="readmeImages/image9.png" width="400">
 </p>
+(TODO: get a better image)
 
 But we have to be careful when doing this. If we just directly add the higher frequency noise without changing it, the higher frequencies will overpower the lower frequency information. To protect against this, as we double the frequency of the noise, we halve the amplitude. This keeps a hierarchy to the noise that gives a really good effect.
 
