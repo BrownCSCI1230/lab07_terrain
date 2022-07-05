@@ -20,7 +20,7 @@ private:
     int m_resolution;
     QVector3D getPosition(int x, int y);
     QVector3D getNormal(int x, int y);
-    QVector3D getColor(QVector3D normal);
+    QVector3D getColor(QVector3D normal,QVector3D position);
     float computePerlin(float x, float y);
     float computeValue(float x, float y);
 };

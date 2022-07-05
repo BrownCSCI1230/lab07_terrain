@@ -33,7 +33,7 @@ float interpolate(float A, float B, float x) {
 
 
 float TerrainGenerator::computePerlin(float x, float y) {
-    //Task X: TODO description
+    //Task 1: TODO description
     int intX = (int) x;
     int intY = (int) y;
 
@@ -74,13 +74,13 @@ QVector3D TerrainGenerator::getPosition(int row, int col) {
     float z = 0;
 
     float Pos2 = (computePerlin(x * 2, y * 2) / 2);
-    float Pos4 = (computeValue(x * 4, y * 4) / 4);
+    float Pos4 = (computePerlin(x * 4, y * 4) / 4);
     float Pos8 = (computePerlin(x * 8, y * 8) / 8);
     float Pos16 = (computePerlin(x * 16, y * 16) / 16);
     float Pos32 = (computePerlin(x * 32, y * 32) / 32);
 
-    //z = Pos2 + Pos4 + Pos8 + Pos16 + Pos32 + Pos8;
-    z = Pos4;
+    z = Pos2 + Pos4 + Pos8 + Pos16 + Pos32 + Pos8;
+    //z = Pos4;
     //z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
 
     return QVector3D(x,y,z);
@@ -115,13 +115,18 @@ QVector3D TerrainGenerator::getNormal(int row, int col) {
 }
 
 
-QVector3D TerrainGenerator::getColor(QVector3D normal) {
+QVector3D TerrainGenerator::getColor(QVector3D normal, QVector3D position) {
     //Task X: TODO description
 
     float mix = QVector3D::dotProduct(normal, QVector3D(0,0,1));
     float value = interpolate(0.2,1,mix);
 
-    return QVector3D(value,value,value);
+    float heightValue = (position.z() + 1)/2;
+    float interpolant = 1 / (1 + pow(3,(heightValue - 0.5)*-10));
+
+    return QVector3D(interpolant,interpolant,interpolant);
+
+    //return QVector3D(value,value,value);
 }
 
 
@@ -129,6 +134,7 @@ QVector3D TerrainGenerator::getColor(QVector3D normal) {
 TerrainGenerator::TerrainGenerator()
 {
     m_resolution = 75;
+    m_wireshade = false;
     m_randVecLookup.reserve((m_resolution + 2) * (m_resolution + 2));
 
     std::srand(1);
@@ -145,7 +151,6 @@ TerrainGenerator::TerrainGenerator()
 TerrainGenerator::~TerrainGenerator()
 {
     m_randVecLookup.clear();
-    m_wireshade = true;
 }
 
 int TerrainGenerator::getResolution()
@@ -181,15 +186,15 @@ std::vector<float> TerrainGenerator::generateTerrain() {
             //x2y2z3
             addPointToVector(p1, verts);
             addPointToVector(n1, verts);
-            addPointToVector(getColor(n1), verts);
+            addPointToVector(getColor(n1, p1), verts);
 
             addPointToVector(p2, verts);
             addPointToVector(n2, verts);
-            addPointToVector(getColor(n2), verts);
+            addPointToVector(getColor(n2, p2), verts);
 
             addPointToVector(p3, verts);
             addPointToVector(n3, verts);
-            addPointToVector(getColor(n3), verts);
+            addPointToVector(getColor(n3, p3), verts);
 
             //tris 2
             //x1y1z1
@@ -197,15 +202,15 @@ std::vector<float> TerrainGenerator::generateTerrain() {
             //x1y2z4
             addPointToVector(p1, verts);
             addPointToVector(n1, verts);
-            addPointToVector(getColor(n1), verts);
+            addPointToVector(getColor(n1, p1), verts);
 
             addPointToVector(p3, verts);
             addPointToVector(n3, verts);
-            addPointToVector(getColor(n3), verts);
+            addPointToVector(getColor(n3, p3), verts);
 
             addPointToVector(p4, verts);
             addPointToVector(n4, verts);
-            addPointToVector(getColor(n4), verts);
+            addPointToVector(getColor(n4, p4), verts);
         }
     }
     return verts;
