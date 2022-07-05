@@ -137,7 +137,9 @@ Now that has all been covered, finish writing the generatePerlin function by wri
 
 Now that we have simple, bumpy terrain, we are going to add some visual detail by adding multiple copies of noise with different scales. This will replace the smooth unnatural hills with rugged mountains!
 
-(get pictures showing the result)
+<p align="center">
+<img src="readmeImages/fractalNoiseWireFrame.png" height=500>
+</p>
 
 ## Scaling our Perlin Noise
 
@@ -146,13 +148,11 @@ The first thing to understand is how to scale the noise in the first place. Reme
 > **Task 6:** Modify just the inputs to `computePerlin` and generate noise with a different scale.
 
 ## What are Octaves
+<p align="center">
+<img src="readmeImages/Octave Noise Example.png" style="width: 100%;">
+</p>
 
 Now that we know how to scale the noise the question is how much? Well we could pick any arbitrary amount to be honest. However, one technique which gives natural looking results is to increase the frequency by powers of two. By doubling the frequency we get the next "octave" of the noise (to people with some knowledge of music this may be familiar).
-
-<p align="center">
-<img src="readmeImages/image9.png" width="400">
-</p>
-(TODO: get a better image)
 
 But we have to be careful when doing this. If we just directly add the higher frequency noise without changing it, the higher frequencies will overpower the lower frequency information. To protect against this, as we double the frequency of the noise, we halve the amplitude. This keeps a hierarchy to the noise that gives a really good effect.
 
