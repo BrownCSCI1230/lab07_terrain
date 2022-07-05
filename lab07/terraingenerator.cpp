@@ -11,12 +11,17 @@ void addPointToVector(QVector3D point, std::vector<float>& vector) {
 
 QVector2D TerrainGenerator::randVec(int row, int col)
 {
-    return m_randVecLookup.at((row * (2 + m_resolution) + col) % ((2 + m_resolution) * (2 + m_resolution)));
+    std::hash<int> intHash;
+    int index = intHash(row * 41 + col * 43) % m_lookupSize;
+    return m_randVecLookup.at(index);
 }
 
 float TerrainGenerator::randVal(int row, int col)
 {
-    return (m_randVecLookup.at((row * (2 + m_resolution) + col) % ((2 + m_resolution) * (2 + m_resolution))).x() + 1)/2;
+    std::hash<int> intHash;
+    int index = intHash(row * 11 + col * 7) % m_lookupSize;
+
+    return (m_randVecLookup.at(index).x() + 1)/2;
 }
 
 float interpolate(float A, float B, float x) {
@@ -67,6 +72,8 @@ float TerrainGenerator::computeValue(float x, float y) {
 }
 
 QVector3D TerrainGenerator::getPosition(int row, int col) {
+    //normalize horizontal coordinates relative to unit square
+    //makes scaling for sampling much more natural
     float x = 1.0 * row / m_resolution;
     float y = 1.0 * col / m_resolution;
 
@@ -78,9 +85,12 @@ QVector3D TerrainGenerator::getPosition(int row, int col) {
     float Pos8 = (computePerlin(x * 8, y * 8) / 8);
     float Pos16 = (computePerlin(x * 16, y * 16) / 16);
     float Pos32 = (computePerlin(x * 32, y * 32) / 32);
+    float Pos64 = (computePerlin(x * 64, y * 64) / 64);
+    float Pos128 = (computePerlin(x * 128, y * 128) / 128);
 
+    z = Pos2 + Pos4 + Pos8;
     //z = Pos2 + Pos4 + Pos8 + Pos16 + Pos32 + Pos8;
-    z = Pos4;
+    //z = Pos32;
     //z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
 
     return QVector3D(x,y,z);
@@ -119,7 +129,7 @@ QVector3D TerrainGenerator::getColor(QVector3D normal, QVector3D position) {
     //Task X: TODO description
 
     float mix = QVector3D::dotProduct(normal, QVector3D(0,0,1));
-    float value = interpolate(0.2,1,mix);
+    //float value = interpolate(0.2,1,mix);
 
     float heightValue = (position.z() + 1)/2;
     float interpolant = 1 / (1 + pow(3,(heightValue - 0.5)*-10));
@@ -133,18 +143,16 @@ QVector3D TerrainGenerator::getColor(QVector3D normal, QVector3D position) {
 
 TerrainGenerator::TerrainGenerator()
 {
-    m_resolution = 75;
-    m_wireshade = true;
-    m_randVecLookup.reserve((m_resolution + 2) * (m_resolution + 2));
+    m_resolution = 250;
+    m_lookupSize = 1024;
+    m_wireshade = false;
+    m_randVecLookup.reserve(m_lookupSize);
 
     std::srand(1);
 
-    for(int r = 0; r < m_resolution + 2; r++)
+    for(int i = 0; i < m_lookupSize; i++)
     {
-        for(int c = 0; c < m_resolution + 2; c++)
-        {
-            m_randVecLookup.push_back(QVector2D(std::rand() * 2.0 / RAND_MAX - 1.0,std::rand() * 2.0 / RAND_MAX - 1.0));
-        }
+        m_randVecLookup.push_back(QVector2D(std::rand() * 2.0 / RAND_MAX - 1.0,std::rand() * 2.0 / RAND_MAX - 1.0));
     }
 }
 
