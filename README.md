@@ -12,22 +12,16 @@ By the end of this lab you should be able to…
 - work with non-Implicit Geometry and per vertex information.
 
 ## Context
-![Examples of Procedural Noise](readmeImages/image2.jpg)
-
-Procedural noise as a concept in graphics is simply any method that can create randomized data with certain desirable properties (like continuity for example).
+Procedural noise as a concept in graphics is simply any method that can create randomized data with certain desirable properties (like continuity for example). It is used to make a wide variety of assets, from geometry, to textures.
 
 
 | Procedural Mountains  | Perlin Flow | Procedural Organic Texture|
-| --------------------- | ------------- | ------------------------- |
+| -------- | ------------- | ----------------- |
 | ![Procedural Mountains](readmeImages/image5.jpg) | ![Perlin Flow](readmeImages/image6.jpg) | ![Perlin Organic Material](readmeImages/image7.png) |
 
 As you can see from these examples, well constructed noise can be used to create really incredible scenes and images from completely random data!
 	
-The noise that we will be implementing today is called Perlin Noise, and is a classic noise generation algorithm. Let's hop into it.
-
-<details> <summary> Why Perlin Noise?</summary> 
-	
-</details> 
+In this lab we are primarily focused on using procedural methods to generate 2D textures, specifically a height map which we will use to generate geometry. There are a wide vareiety of potential methods to choose from.
 
 # 1 Noise Generator
 
