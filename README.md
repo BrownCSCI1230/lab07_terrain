@@ -14,14 +14,47 @@ By the end of this lab you should be able to…
 ## Context
 Procedural noise as a concept in graphics is simply any method that can create randomized data with certain desirable properties (like continuity for example). It is used to make a wide variety of assets, from geometry, to textures.
 
-
-| Procedural Mountains  | Perlin Flow | Procedural Organic Texture|
-| -------- | ------------- | ----------------- |
-| ![Procedural Mountains](readmeImages/image5.jpg) | ![Perlin Flow](readmeImages/image6.jpg) | ![Perlin Organic Material](readmeImages/image7.png) |
+<p align="center">
+<img src="readmeImages/image5.png"    style="width: 30%;">
+<img src="readmeImages/image6.jpg"    style="width: 30%;">
+<img src="readmeImages/image7.png"   style="width: 30%;">
+</p>
 
 As you can see from these examples, well constructed noise can be used to create really incredible scenes and images from completely random data!
 	
 In this lab we are primarily focused on using procedural methods to generate 2D textures, specifically a height map which we will use to generate geometry. There are a wide vareiety of potential methods to choose from.
+
+<p align="center">
+<img src="readmeImages/whiteExample.png"    style="width: 16%;">
+<img src="readmeImages/valueExample.png"    style="width: 16%;">
+<img src="readmeImages/perlinExample.png"   style="width: 16%;">
+<img src="readmeImages/simplexExample.png"  style="width: 16%;">
+<img src="readmeImages/voronoiExample.png"  style="width: 16%;">
+<img src="readmeImages/CellularExample.png" style="width: 16%;">
+</p>
+
+### White Noise
+<p align="center">
+<img src="readmeImages/whiteExample.png" width="400">
+</p>
+
+
+The most primative form of noise is "white noise" which you may have heard of before. Think of every pixel as having a completely random value completely uncorrelated with the values of its neightbors. However this ends up looking too random and there is no structure we can make use of.
+
+
+### Value Noise
+<p align="center">
+<img src="readmeImages/valueExample.png" width="400">
+</p>
+
+The next form on noise to consider is "value noise." This form of noise is essentially white noise scaled up and interpolated to try to give some smooth gradients and larger structure to the texture (remember the scaling filter?). However looking at the results you can see that the final product does not look entirely organic as the gradients are all aligned to the pixel grid. 
+
+### Perlin Noise
+<p align="center">
+<img src="readmeImages/perlinExample.png" width="400">
+</p>
+
+This is where "perlin noise", what we will be implementing in this lab, comes in. By defining a grid of *vectors* instead of values we can add a lot more interest to the final product as the gradients are no longer aligned along the pixel grid!
 
 # 1 Noise Generator
 
