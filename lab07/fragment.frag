@@ -12,6 +12,6 @@ void main(void)
     //fragColor = vec4((clamp(dot(norm.xyz,lightDir),0,1)* 0.7 +  0.3) * objColor,1.0);
     //fragColor = vec4(norm.xyz,1.0);
     //fragColor = vec4(vec3((vert.z + 1)/2.0),1.0);
-    //fragColor = vec4(0.8);
-    fragColor = vec4(color,1);
+    fragColor = vec4(0.8);
+    //fragColor = vec4(color,1);
 }
