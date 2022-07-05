@@ -1,6 +1,6 @@
 # Terrain Lab
 
-# Introduction
+# 0 Introduction
 
 Hello, welcome to the Terrain Lab! We've seen how 2D arrays can store intersection information to be used for lighting computation. Here we are going to store height information in a 2D array and use it to construct geometry! We will begin by implementing a noise generation function to create mountainous terrain height maps, then we will have a quick exercise in vector operations to add color to our scene. Let's get started!
 
@@ -11,11 +11,9 @@ By the end of this lab you should be able to…
 - be able to come up with your own creative uses for procedural noise!
 - work with non-Implicit Geometry and per vertex information.
 
-# Noise Generator
-
+## Context
 ![Examples of Procedural Noise](readmeImages/image2.jpg)
 
-## Context
 Procedural noise as a concept in graphics is simply any method that can create randomized data with certain desirable properties (like continuity for example).
 
 
@@ -31,7 +29,9 @@ The noise that we will be implementing today is called Perlin Noise, and is a cl
 	
 </details> 
 
-## Implementation
+# 1 Noise Generator
+
+##  Implementation
 
 The method of creating perlin noise is, generally, as follows…
 1. define a grid of vectors with randomized direction
@@ -42,37 +42,48 @@ The method of creating perlin noise is, generally, as follows…
 
 Don't worry if you are still confused, this is just a high level overview. We will get into the details in the later Tasks!
 
-### Get the Four Closest Grid Indices
+### 1.1 Define Random Vectors
+
+To handle the generation of random vectors we have provided you with the function `randVec` which takes in integer coordinates and produces a random vector for you to use in your implementation. This function works by combining the input coordinates and then hashing them to get an index in a precomputed list of random vectors. By defining the grid in this way it is both **coherent** (the same input row and column produces the same output vector) and **infinite** in extent. 
+
+To give you a quick overview of the stencil you need to worry about for this section, you will mainly be working in 
+- `getPosition`: uses computePerlin to sample the noise function and generate the output height
+- `computePerlin`: computes samples of the noise function using `randVec` and `interpolate`
+- `interpolate`: interpolates between input values using the mix parameter
+
+### 1.2 Get the Four Closest Grid Indices
 
 <p align="center">
 <img src="readmeImages/pic1.png" width="800">
 </p>
 
-Given the floating point coordinates to evaluate we need to compute the integer indices of the four closest grid points. Look into glm::floor and glm::ceil.
+Given the floating point coordinates to evaluate we need to compute the integer indices of the four closest grid points. The simplest way of doing this is casting to an int and then incrementing when you need the adjacent indicies. Remember that computePerlin takes in floating point coordinates from the Real Plane and that the grid of random vectors is defined for all pairs of **integers**. 
 
 > **Task 1:** Obtain four closest grid points
 
-### Compute Offset Vectors
+### 1.3 Compute Offset Vectors
 
 <p align="center">
 <img src="readmeImages/pic2.png" width="800">
 </p>
 
-Using the coordinates of the four closest grid points and the input location, compute the four offset vectors from the grid points to the interest point. Make sure to normalize the results to unit vectors.
+Using the coordinates of the four closest grid points and the input location, compute the four offset vectors from the grid points to the interest point. Do NOT normalize these offset vectors.
 
 > **Task 2:** Compute the four offset vectors for each relevant grid point
 
-### Compute Dot Products
+### 1.4 Compute Dot Products
 
 <p align="center">
 <img src="readmeImages/pic3.png" width="800">
 </p>
 
-We have four offset vectors and can look up the random vectors for each using getGridVector. Now compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine later on to get the final height.
+We have four offset vectors and can look up the corresponding random grid vector for each using `randVec`.
+
+We now want to compute the dot product between the corresponding offset vectors and random grid vectors. This will yield four floating point values, one for each grid point, that we will combine later on to get the final height.
 
 > **Task 3:** Compute the dot product between the offset and random vectors
 
-### Implement Interpolation
+### 1.5 Implement Interpolation
 
 We are now faced with an important decision: Choice of interpolation function. There is no "right" or "correct" interpolation method in general, only what effect you want to create for a specific application.
 
@@ -89,7 +100,8 @@ The question becomes visually, how do we want to draw a line connecting A to B? 
 	
 <p align="center">
 <img src="readmeImages/image3.png" width="300">
-<img src="readmeImages/image12.png" height="300">
+<img src="readmeImages/image12.png" width="300">
+<img src="readmeImages/image15.png" width="300">
 </p>
  
 This creates an even transition between the two values, which may be interesting depending on the application.
@@ -98,7 +110,8 @@ We could also consider This weird function below…
 
 <p align="center">
 <img src="readmeImages/image8.png" width="300">
-<img src="readmeImages/image13.PNG" height="300">
+<img src="readmeImages/image13.PNG" width="300">
+<img src="readmeImages/image16.png" width="300">
 </p>
 
 …if you really wanted to. The point is that this is more of a creative design decision than an analytically correct one.
@@ -109,12 +122,13 @@ We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-
 
 <p align="center">
 <img src="readmeImages/image4.png" width="300">
-<img src="readmeImages/image14.png" height="300">
+<img src="readmeImages/image14.png" width="300">
+<img src="readmeImages/image17.png" width="300">
 </p>
 
 > **Task 4:** Fill in interpolation function
 
-### Combine Dot Products
+### 1.6 Combine Dot Products
 
 Now that we have all our data, we need to combine it into one value representing the noise value at this coordinate. This is where we put our interpolation function to work. We have a problem though, we defined our interpolation to work based on two values and one mix parameter, so how are we going to combine 4 different values?
 
@@ -133,7 +147,7 @@ Now that has all been covered, finish writing the generatePerlin function by wri
 
 > **Task 5:** Using your interpolation function to merge four values into one
 
-# Introducing Octaves
+# 2 Introducing Octaves
 
 Now that we have simple, bumpy terrain, we are going to add some visual detail by adding multiple copies of noise with different scales. This will replace the smooth unnatural hills with rugged mountains!
 
@@ -141,13 +155,13 @@ Now that we have simple, bumpy terrain, we are going to add some visual detail b
 <img src="readmeImages/fractalNoiseWireFrame.png" height=500>
 </p>
 
-## Scaling our Perlin Noise
+## 2.1 Scaling our Perlin Noise
 
 The first thing to understand is how to scale the noise in the first place. Remember how we are generating the height in the first place, a call to (name of function here) with x and y used directly.
 
 > **Task 6:** Modify just the inputs to `computePerlin` and generate noise with a different scale.
 
-## What are Octaves
+## 2.2 What are Octaves
 <p align="center">
 <img src="readmeImages/Octave Noise Example.png" style="width: 100%;">
 </p>
@@ -158,11 +172,11 @@ But we have to be careful when doing this. If we just directly add the higher fr
 
 > **Task 7:** In the (compute height function) use multiple calls to the generate noise function to add at least 4 different noise octaves to the scene each with the correct amplitude and frequency to generate rugged terrain!
 
-# Hit the Slopes
+# 3 Hit the Slopes
 
 Now that the height map has been specified we have some mountainous terrain but there is no color variation leading to a somewhat bland scene. To add some visual interest we are going to introduce a per-vertex color based on the slope of the surrounding terrain. The end goal is that mountain slopes are gray stone and flat areas or peaks are white like snow.
 
-## Getting the Normal
+## 3.1 Getting the Normal
 
 The first thing we need to do is compute the normal for a given vertex.
 
@@ -178,7 +192,7 @@ To compute the normal for triangle $(P, n_i, n_{i+1})$, Take the cross product (
 
 > **Task 8:** In the getNormal function use getPosition and compute the normal for the specified vertex.
 
-## Setting the Color
+## 3.2 Setting the Color
 
 Now that we have the normal, we need to use this slope information to make vertical sections gray and horizontal sections white.
 
