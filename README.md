@@ -112,33 +112,82 @@ We now want to compute the dot product between the corresponding offset vectors 
 
 ### 1.5 Implement Interpolation
 
-Interpolation is used to extrapolate a continuous function from discrete data points. The simplest method of this takes the following form.
+Interpolation is used to extrapolate a continuous function from discrete data points. The simplest method, called linear interpolation, takes the following form.
 
 $$
+	y = y_1 + (x - x_1) \frac{(y_2 - y_1)}{(x_2 - x_1)}
+$$
+- $y$: interpolation value
+- $x$: independent variable
+- $y_i$, $x_i$: values of the function at a point
+
+This is just the equation of the line passing through the two points! The equation in its current form, while descriptive, is a bit messy for our purposes. If we replace $x$ with a new mix factor $x = m(x_2 - x_1) + x_1$, we can normalize our formula such that the independent variable ranges only from 0 to 1.
+
+$$
+\begin{gather}
+	y = y_1 + (m(x_2 - x_1) + x_1 - x_1) \frac{(y_2 - y_1)}{(x_2 - x_1)}\\
+	y = y_1 + m(x_2 - x_1) \frac{(y_2 - y_1)}{(x_2 - x_1)}\\
+	y = y_1 + m(y_2 - y_1)
+\end{gather}
+$$
+
+So now when $m = 0$ $y = y_1$, when $m = 1$ $y = y_2$, and for values in the middle we get a linear combination! We can represent this visually by graphing the interpolation function.
 
 <p align="center">
 <img src="readmeImages/image3.png" width="300">
-<img src="readmeImages/image12.png" width="300">
-<img src="readmeImages/image15.png" width="300">
 </p>
+
+Where the line shows how the interpolation value changes as a function of the independent variable. When we use this linear interpolation for our terrain generation we get the following results.
+
+<p align="center">
+<img src="readmeImages/image12.png" height="300">
+<img src="readmeImages/image15.png" height="300">
+	
+(Value Noise on the Left, Perlin on the Right)
+</p>
+
+Hmm... it's a start at least.
+
+But the linear nature of the interpolation function leaves the surface way to angular to pass as terrain. Ideally we want some way to smooth out the curve. This is where the concept of easing functions comes in!
+
+An easing function has the following properties
+- $ease(0) = 0$
+- $ease(1) = 1$
+- $ease(x) \text{ is continuous}$
+
+You can think of it as remapping the orginial linear slope to whatever curve is desired.
+
+thus our Interpolation formula takes on the new form
+
+$$
+	y = y_1 + ease(x)(y_2 - y_1)
+$$
+
+The choice of easing function is a creative design decision, not one that can be analytically correct, for example you could choose this weird function if you really wanted
 
 <p align="center">
 <img src="readmeImages/image8.png" width="300">
+</p>
+
+<p align="center">
 <img src="readmeImages/image13.PNG" width="300">
 <img src="readmeImages/image16.png" width="300">
 </p>
 
-https://easings.net/
-
-We recommend using bicubic easing, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own easing function and show us any cool results!
+Remeber though we want to make reasonable looking terrain, for that reason we recommend using cubic easing, given by the formula $ease(x) = 3x^{2}-2x^{3} $, as it yields smooth results.
 
 <p align="center">
 <img src="readmeImages/image4.png" width="300">
+</p>
+
+<p align="center">
 <img src="readmeImages/image14.png" width="300">
 <img src="readmeImages/image17.png" width="300">
 </p>
 
-> **Task 4:** Fill in interpolation function
+Feel free to try out your own easing function and show us any cool results! This [website](https://easings.net/) gives a cheat-sheet of common easing functions used in website styling (CSS) but can give you a general sense of they types of things easing functions can do.
+
+> **Task 4:** Fill in `interpolate`
 
 ### 1.6 Combine Dot Products
 
