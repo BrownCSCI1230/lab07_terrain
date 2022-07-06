@@ -242,10 +242,13 @@ Now that the height map has been specified we have some mountainous terrain but 
 <img src="readmeImages/coloredTerrain.png"    style="width: 45%;">
 </p>
 
+> **Task 8:** To start off switch `m_wireshade` to false in the constructor.
+
+Your terrain should now appear solid white. This is because the normals are being set to (0,0,1) in `getNormal` as a placeholder. Let's fix that!
 
 ## 3.1 Getting the Normal
 
-The first thing we need to do is compute the normal for a given vertex.
+We are now faced with the problem of computing the normal for any given vertex. As the geometry is procedurally generated, we cannot use the same formulaic approach as we did for implicit geometry. Instead we need a dynamic algorithm for computing the normals given arbitary geometry. As we are looking for a mountain-like appearance, a simple, smooth surface should suffice as the height map itself describes the roughness. With this in mind, a simple local average should suffice to smooth out the surface.
 
 <p align="center">
 <img src="readmeImages/image11.png" width="400">
@@ -257,7 +260,7 @@ this creates triangles of the following form $(P, n_i, n_{i+1})$.
 Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $P$.
 To compute the normal for triangle $(P, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
 
-> **Task 8:** In the getNormal function use getPosition and compute the normal for the specified vertex.
+> **Task 9:** In the getNormal function use getPosition and compute the normal for the specified vertex.
 
 ## 3.2 Setting the Color
 
@@ -269,4 +272,4 @@ To do this we are going to use our old friend, Interpolation! The first step is 
 <img src="readmeImages/image10.png" width="400">
 </p>
 
-> **Task 9:** Fill in Compute Color. Use a dot product with a vertical unit vector to interpolate between gray and white.
+> **Task 10:** Fill in Compute Color. Use a dot product with a vertical unit vector to interpolate between gray and white.
