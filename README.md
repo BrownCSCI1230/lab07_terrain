@@ -237,6 +237,12 @@ But we have to be careful when doing this. If we just directly add the higher fr
 
 Now that the height map has been specified we have some mountainous terrain but there is no color variation leading to a somewhat bland scene. To add some visual interest we are going to introduce a per-vertex color based on the slope of the surrounding terrain. The end goal is that mountain slopes are gray stone and flat areas or peaks are white like snow.
 
+<p align="center">
+<img src="readmeImages/normalsComputerd.png"    style="width: 45%;">
+<img src="readmeImages/coloredTerrain.png"    style="width: 45%;">
+</p>
+
+
 ## 3.1 Getting the Normal
 
 The first thing we need to do is compute the normal for a given vertex.
