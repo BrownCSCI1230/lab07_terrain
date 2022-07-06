@@ -112,28 +112,15 @@ We now want to compute the dot product between the corresponding offset vectors 
 
 ### 1.5 Implement Interpolation
 
-We are now faced with an important decision: Choice of interpolation function. There is no "right" or "correct" interpolation method in general, only what effect you want to create for a specific application.
+Interpolation is used to extrapolate a continuous function from discrete data points. The simplest method of this takes the following form.
 
-The problem can be stated abstractly as follows…
+$$
 
-Given two different values (A and B) and a mix parameter (represented by the horizontal axis) between 0 and 1, how can we determine an output as a combination of these three values. Subject to the constraint that when the mix parameter equals 0 or one we want to output A or B respectively. We can visualize this in the following image…
-	
-<p align="center">
-<img src="readmeImages/image1.png" width="300">
-</p>
-	
-The question becomes visually, how do we want to draw a line connecting A to B? Consider a linear interpolation. Given by y = A + x (B - A)
-
-	
 <p align="center">
 <img src="readmeImages/image3.png" width="300">
 <img src="readmeImages/image12.png" width="300">
 <img src="readmeImages/image15.png" width="300">
 </p>
- 
-This creates an even transition between the two values, which may be interesting depending on the application.
-
-We could also consider This weird function below…
 
 <p align="center">
 <img src="readmeImages/image8.png" width="300">
@@ -141,11 +128,9 @@ We could also consider This weird function below…
 <img src="readmeImages/image16.png" width="300">
 </p>
 
-…if you really wanted to. The point is that this is more of a creative design decision than an analytically correct one.
-
 https://easings.net/
 
-We recommend using bicubic interpolation, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own interpolation function and show us any cool results!
+We recommend using bicubic easing, given by the formula $y = A + (3x^{2}-2x^{3}) * (B - A)$, as it yields smooth results but feel free to try out your own easing function and show us any cool results!
 
 <p align="center">
 <img src="readmeImages/image4.png" width="300">
