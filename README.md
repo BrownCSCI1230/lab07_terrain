@@ -251,14 +251,30 @@ Your terrain should now appear solid white. This is because the normals are bein
 We are now faced with the problem of computing the normal for any given vertex. As the geometry is procedurally generated, we cannot use the same formulaic approach as we did for implicit geometry. Instead we need a dynamic algorithm for computing the normals given arbitary geometry. As we are looking for a mountain-like appearance, a simple, smooth surface should suffice as the height map itself describes the roughness. With this in mind, a simple local average should suffice to smooth out the surface.
 
 <p align="center">
-<img src="readmeImages/image11.png" width="400">
+<img src="readmeImages/Normals1.png"    style="width: 40%;">
 </p>
 
-Start by considering a vertex $P$ surrounded by its eight neighbors $n_0$ through $n_7$. Begin by grouping the vertices in triangles such that all triangles have a corner in $P$,
-this creates triangles of the following form $(P, n_i, n_{i+1})$.
+Start by considering a vertex $V$ surrounded by its eight neighbors $n_0$ through $n_7$.
 
-Now we need to calculate the normals for each triangle individually, and then average them together to get our final normal for $P$.
-To compute the normal for triangle $(P, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
+<p align="center">
+<img src="readmeImages/Normals2.png"    style="width: 40%;">
+</p>
+
+Begin by grouping the vertices in triangles such that all triangles have a corner in $V$,
+this creates triangles of the following form $(V, n_i, n_{i+1})$.
+
+<p align="center">
+<img src="readmeImages/Normals3.png"    style="width: 40%;">
+</p>
+
+To compute the normal for triangle $(V, n_i, n_{i+1})$, Take the cross product (math equation here) and then normalize the result.
+
+<p align="center">
+<img src="readmeImages/Normals4.png"    style="width: 40%;">
+</p>
+
+Now that we have the normals for each triangle, sum and normalize to find the final normal for $V$.
+
 
 > **Task 9:** In the getNormal function use getPosition and compute the normal for the specified vertex.
 
