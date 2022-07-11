@@ -84,6 +84,7 @@ void GLWidget::paintGL()
     m_program->bind();
     m_program->setUniformValue(m_projMatrixLoc, m_proj);
     m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
+    m_program->setUniformValue(m_program->uniformLocation("wireshade"),m_terrain.m_wireshade);
 
     int res = m_terrain.getResolution();
 
