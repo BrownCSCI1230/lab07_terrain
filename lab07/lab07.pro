@@ -23,6 +23,9 @@ SOURCES += \
 #else: unix:!android: target.path = /opt/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
 
+INCLUDEPATH += glm
+DEPENDPATH += glm
+
 DISTFILES += \
     fragment.frag \
     vertex.vert

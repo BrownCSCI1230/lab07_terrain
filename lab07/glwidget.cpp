@@ -7,6 +7,7 @@
 #include <QSurfaceFormat>
 #include <QDir>
 #include <iostream>
+#include "glm/gtc/matrix_transform.hpp"
 
 
 GLWidget::GLWidget(QWidget *parent)
@@ -28,8 +29,6 @@ void GLWidget::initializeGL()
     fmt.setMinorVersion(1);
 
     QOpenGLContext::currentContext()->setFormat(fmt);
-
-    std::cout<< QOpenGLContext::currentContext()->format().majorVersion() << " " << QOpenGLContext::currentContext()->format().minorVersion() <<std::endl;
 
     initializeOpenGLFunctions();
     glClearColor(0, 0, 0, 1);
@@ -69,6 +68,7 @@ void GLWidget::initializeGL()
 
     m_world.setToIdentity();
     m_world.translate(QVector3D(-0.5,-0.5,0));
+
 
     m_camera.setToIdentity();
     m_camera.lookAt(QVector3D(1,1,1),QVector3D(0,0,0),QVector3D(0,0,1));

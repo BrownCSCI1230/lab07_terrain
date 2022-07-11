@@ -2,7 +2,7 @@
 #define TERRAINGENERATOR_H
 
 #include <vector>
-#include <QVector3D>
+#include "glm.hpp"
 
 class TerrainGenerator
 {
@@ -15,15 +15,15 @@ public:
     int getResolution();
 
 private:
-    std::vector<QVector2D> m_randVecLookup;
+    std::vector<glm::vec2> m_randVecLookup;
     int m_resolution;
     int m_lookupSize;
 
     float randVal(int row, int col);
-    QVector2D randVec(int row, int col);
-    QVector3D getPosition(int x, int y);
-    QVector3D getNormal(int x, int y);
-    QVector3D getColor(QVector3D normal,QVector3D position);
+    glm::vec2 randVec(int row, int col);
+    glm::vec3 getPosition(int x, int y);
+    glm::vec3 getNormal(int x, int y);
+    glm::vec3 getColor(glm::vec3 normal,glm::vec3 position);
     float computePerlin(float x, float y);
     float computeValue(float x, float y);
 };

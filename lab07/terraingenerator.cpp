@@ -1,15 +1,15 @@
 #include "terraingenerator.h"
 
-#include <QVector3D>
 #include <cmath>
+#include "glm.hpp"
 
-void addPointToVector(QVector3D point, std::vector<float>& vector) {
-    vector.push_back(point.x());
-    vector.push_back(point.y());
-    vector.push_back(point.z());
+void addPointToVector(glm::vec3 point, std::vector<float>& vector) {
+    vector.push_back(point.x);
+    vector.push_back(point.y);
+    vector.push_back(point.z);
 }
 
-QVector2D TerrainGenerator::randVec(int row, int col)
+glm::vec2 TerrainGenerator::randVec(int row, int col)
 {
     std::hash<int> intHash;
     int index = intHash(row * 41 + col * 43) % m_lookupSize;
@@ -21,7 +21,7 @@ float TerrainGenerator::randVal(int row, int col)
     std::hash<int> intHash;
     int index = intHash(row * 11 + col * 7) % m_lookupSize;
 
-    return (m_randVecLookup.at(index).x() + 1)/2;
+    return (m_randVecLookup.at(index).x + 1)/2;
 }
 
 float interpolate(float A, float B, float x) {
@@ -42,14 +42,14 @@ float TerrainGenerator::computePerlin(float x, float y) {
     int intX = (int) x;
     int intY = (int) y;
 
-    float A = QVector2D::dotProduct(randVec(intX, intY),
-                                        QVector2D(x - intX,y - intY)) ;
-    float B = QVector2D::dotProduct(randVec(intX + 1, intY),
-                                    QVector2D(x - (intX + 1),y - intY));
-    float C = QVector2D::dotProduct(randVec(intX + 1, intY + 1),
-                                    QVector2D(x - (intX + 1),y - (intY + 1)));
-    float D = QVector2D::dotProduct(randVec(intX, intY + 1),
-                                    QVector2D(x - intX,y - (intY + 1)));
+    float A = glm::dot(randVec(intX, intY),
+                       glm::vec2(x - intX,y - intY)) ;
+    float B = glm::dot(randVec(intX + 1, intY),
+                       glm::vec2(x - (intX + 1),y - intY));
+    float C = glm::dot(randVec(intX + 1, intY + 1),
+                       glm::vec2(x - (intX + 1),y - (intY + 1)));
+    float D = glm::dot(randVec(intX, intY + 1),
+                       glm::vec2(x - intX,y - (intY + 1)));
 
     return interpolate(interpolate(A,B,x - intX),
                        interpolate(D,C,x - intX),
@@ -71,7 +71,7 @@ float TerrainGenerator::computeValue(float x, float y) {
                        y - intY);
 }
 
-QVector3D TerrainGenerator::getPosition(int row, int col) {
+glm::vec3 TerrainGenerator::getPosition(int row, int col) {
     //normalize horizontal coordinates relative to unit square
     //makes scaling for sampling much more natural
     float x = 1.0 * row / m_resolution;
@@ -88,18 +88,18 @@ QVector3D TerrainGenerator::getPosition(int row, int col) {
     float Pos64 = (computePerlin(x * 64, y * 64) / 64);
     float Pos128 = (computePerlin(x * 128, y * 128) / 128);
 
-    z = Pos2 + Pos4 + Pos8;
+    //z = Pos2 + Pos4 + Pos8;
     //z = Pos2 + Pos4 + Pos8 + Pos16 + Pos32 + Pos8;
     //z = Pos32;
-    //z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
+    z = Pos2 + Pos4 + (Pos8 + Pos16 + Pos32)* ((Pos2 + 1) / 4 + (Pos4 + 1) / 4);
 
-    return QVector3D(x,y,z);
+    return glm::vec3(x,y,z);
 }
 
-QVector3D TerrainGenerator::getNormal(int row, int col) {
+glm::vec3 TerrainGenerator::getNormal(int row, int col) {
     //Task X: TODO description
 
-    QVector3D normal = QVector3D(0,0,0);
+    glm::vec3 normal = glm::vec3(0,0,0);
     int coordlookup[] = {
         -1,-1,
         0,-1,
@@ -110,33 +110,33 @@ QVector3D TerrainGenerator::getNormal(int row, int col) {
         -1,1,
         -1,0
     };
-    QVector3D p = getPosition(row,col);
+    glm::vec3 p = getPosition(row,col);
     for (int i = 0; i < 8; i++) {
         int rdisp1 = coordlookup[2*i];
         int cdisp1 = coordlookup[(2*i + 1) % 16];
 
         int rdisp2 = coordlookup[2*(i + 1) % 16];
         int cdisp2 = coordlookup[(2*(i + 1) + 1) % 16];
-        QVector3D p1 = getPosition(row + rdisp1,col + cdisp1);
-        QVector3D p2 = getPosition(row + rdisp2,col + cdisp2);
-        normal = normal + QVector3D::crossProduct(p1 - p, p2 - p);
+        glm::vec3 p1 = getPosition(row + rdisp1,col + cdisp1);
+        glm::vec3 p2 = getPosition(row + rdisp2,col + cdisp2);
+        normal = normal + glm::cross(p1 - p, p2 - p);
     }
-    return normal.normalized();
+    return glm::normalize(normal);
 }
 
 
-QVector3D TerrainGenerator::getColor(QVector3D normal, QVector3D position) {
+glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
     //Task X: TODO description
 
-    float mix = QVector3D::dotProduct(normal, QVector3D(0,0,1));
-    //float value = interpolate(0.2,1,mix);
+    float mix = glm::dot(normal, glm::vec3(0,0,1));
+    float value = interpolate(0.2,1,mix);
 
-    float heightValue = (position.z() + 1)/2;
+    float heightValue = (position.z + 1)/2;
     float interpolant = 1 / (1 + pow(3,(heightValue - 0.5)*-10));
 
-    return QVector3D(interpolant,interpolant,interpolant);
+    //return glm::vec3(interpolant,interpolant,interpolant);
 
-    //return QVector3D(value,value,value);
+    return glm::vec3(value,value,value);
 }
 
 
@@ -152,7 +152,7 @@ TerrainGenerator::TerrainGenerator()
 
     for(int i = 0; i < m_lookupSize; i++)
     {
-        m_randVecLookup.push_back(QVector2D(std::rand() * 2.0 / RAND_MAX - 1.0,std::rand() * 2.0 / RAND_MAX - 1.0));
+        m_randVecLookup.push_back(glm::vec2(std::rand() * 2.0 / RAND_MAX - 1.0,std::rand() * 2.0 / RAND_MAX - 1.0));
     }
 }
 
@@ -178,15 +178,15 @@ std::vector<float> TerrainGenerator::generateTerrain() {
             int x2 = x + 1;
             int y2 = y + 1;
 
-            QVector3D p1 = getPosition(x1,y1);
-            QVector3D p2 = getPosition(x2,y1);
-            QVector3D p3 = getPosition(x2,y2);
-            QVector3D p4 = getPosition(x1,y2);
+            glm::vec3 p1 = getPosition(x1,y1);
+            glm::vec3 p2 = getPosition(x2,y1);
+            glm::vec3 p3 = getPosition(x2,y2);
+            glm::vec3 p4 = getPosition(x1,y2);
 
-            QVector3D n1 = getNormal(x1,y1);
-            QVector3D n2 = getNormal(x2,y1);
-            QVector3D n3 = getNormal(x2,y2);
-            QVector3D n4 = getNormal(x1,y2);
+            glm::vec3 n1 = getNormal(x1,y1);
+            glm::vec3 n2 = getNormal(x2,y1);
+            glm::vec3 n3 = getNormal(x2,y2);
+            glm::vec3 n4 = getNormal(x1,y2);
 
             //tris 1
             //x1y1z1
